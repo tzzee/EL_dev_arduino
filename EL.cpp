@@ -899,7 +899,7 @@ void EL::replyGetDetail(const IPAddress toip, const byte _seoj[] = nullptr)
 				Serial.printf("dev prof: pdcedt: %d\n", pdcedt.getLength());
 #endif
 				// PDCとEDT確保
-				memcpy(&detail[detailSize], pdcedt, pdcedt.getLength() + 1); // size = pdc + edt
+				memcpy(&detail[detailSize], pdcedt, pdcedt.getPDC() + 1); // size = pdc + edt
 				detailSize += pdcedt.getPDC() + 1;
 			}
 		}
@@ -1213,7 +1213,7 @@ void EL::replyInfreqDetail(const IPAddress toip, const byte _seoj[] = nullptr)
 				Serial.printf("dev prof: pdcedt: %d\n", pdcedt.getLength());
 #endif
 				// PDCとEDT確保
-				memcpy(&detail[detailSize], pdcedt, pdcedt.getLength() + 1); // size = pdc + edt
+				memcpy(&detail[detailSize], pdcedt, pdcedt.getPDC() + 1); // size = pdc + edt
 				detailSize += pdcedt.getPDC() + 1;
 			}
 		}
