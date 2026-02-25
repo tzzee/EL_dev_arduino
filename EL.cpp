@@ -1637,20 +1637,27 @@ void EL::recvProcess(void)
 		// 要求されたオブジェクトについて調べる
 		// 内部的に使用しているデバイスIDにかえる
 
-		deoj[2] = i; // インスタンス番号が0だと探索できないので、具体的にiとする
+			deoj[2] = i; // インスタンス番号が0だと探索できないので、具体的にiとする
 
-		int devId = getDevId(deoj);
-		if (devId == EL_DEVID_NOTHING)
-		{
-			return;
-		} // 管理していないオブジェクトなら破棄
+			int devId = getDevId(deoj);
+			if (devId == EL_DEVID_NOTHING)
+			{
+				const bool isResponseOrInf = (esv == EL_SETI_SNA || esv == EL_SETC_SNA || esv == EL_GET_SNA || esv == EL_INF_SNA ||
+					esv == EL_SET_RES || esv == EL_GET_RES || esv == EL_INF || esv == EL_INFC || esv == EL_INFC_RES || esv == EL_SETGET_RES);
+				if (isResponseOrInf) {
+					if (userfunc) {
+						userfunc(tid, seoj, deoj, esv, opc, epc, pdc, edt);
+					}
+				}
+				return; // 管理していないオブジェクトは内部処理しない
+			}
 
 		// OPCで処理
 		boolean success = true;
-		for (int o = 0; o < opc; o += 1)
-		{
-			if (!userfunc(tid, seoj, deoj, esv, opc, epc, pdc, edt)) // 失敗
+			for (int o = 0; o < opc; o += 1)
 			{
+				if (!userfunc(tid, seoj, deoj, esv, opc, epc, pdc, edt)) // 失敗
+				{
 				// どこかで失敗したら、失敗を返却
 #ifdef __EL_DEBUG__
 				Serial.println("EL::recvProcess() userfunc ret=false (or Node Profile)");
