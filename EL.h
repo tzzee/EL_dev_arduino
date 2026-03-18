@@ -186,12 +186,12 @@ private:
 	int _sendPacketSize = 0;	   ///< recentry sended packet size: 直近の送信パケットサイズ
 	int _readPacketSize = 0;	   ///< recentry readed packet size: 直近の受信・読込パケットサイズ
 	byte _sBuffer[EL_BUFFER_SIZE]; ///< send buffer: 直近の送信パケットデータ
-	WiFiUDP *_udp;				   ///< WiFiのUDPソケット
+	UDP *_udp;				   ///< UDPソケット
 	ELCallback userfunc;		   ///< ユーザの受信処理, V.4
 
 protected:
 	int parsePacket(void);											 // 受信データを読む
-	void commonConstructor(WiFiUDP &udp, byte eojs[][3], int count); // コンストラクタで共通にコールされる
+	void commonConstructor(UDP &udp, byte eojs[][3], int count); // コンストラクタで共通にコールされる
 	void tidAutoIncrement(void);									 // データ送信時にTIDを自動的にインクリメントの再計算する(シンプルに+1するとオーバーフローするのでこれ使う)
 
 public:
@@ -201,9 +201,9 @@ public:
 	byte _tid[2];				   ///< TID (semi-auto incremented)
 
 	////////////////////////////////////////////////////
-	EL(WiFiUDP &udp, byte classGroupCode, byte classCode, byte instanceNumber); // for single dev (devid=0)
-	EL(WiFiUDP &udp, byte eojs[][3], int count);								// for multi dev
-	EL(WiFiUDP &udp, std::initializer_list<std::initializer_list<byte>> eojs);	// for multi dev
+	EL(UDP &udp, byte classGroupCode, byte classCode, byte instanceNumber); // for single dev (devid=0)
+	EL(UDP &udp, byte eojs[][3], int count);								// for multi dev
+	EL(UDP &udp, std::initializer_list<std::initializer_list<byte>> eojs);	// for multi dev
 
 	void begin(void);
 	void begin(ELCallback cb); // V.4

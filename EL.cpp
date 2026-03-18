@@ -24,7 +24,7 @@
 /// @note eoj0, eoj1, eoj2で一つのオブジェクト
 /// 一般照明の例
 /// ex. EL(udp, 0x02, 0x90, 0x01);
-EL::EL(WiFiUDP &udp, byte classGroupCode, byte classCode, byte instanceNumber)
+EL::EL(UDP &udp, byte classGroupCode, byte classCode, byte instanceNumber)
 {
 	byte eoj[1][3] = {{classGroupCode, classCode, instanceNumber}};
 	commonConstructor(udp, eoj, 1);
@@ -36,7 +36,7 @@ EL::EL(WiFiUDP &udp, byte classGroupCode, byte classCode, byte instanceNumber)
 /// @param eojs byte [][3]
 /// @param count int
 /// @note
-EL::EL(WiFiUDP &udp, byte eojs[][3], int count)
+EL::EL(UDP &udp, byte eojs[][3], int count)
 {
 	commonConstructor(udp, eojs, count);
 }
@@ -48,7 +48,7 @@ EL::EL(WiFiUDP &udp, byte eojs[][3], int count)
 /// @note 使い方
 /// EL echo(elUDP, { { 0x02, 0x90, 0x01 },
 /// { 0x02, 0x90, 0x02 } });
-EL::EL(WiFiUDP &udp, std::initializer_list<std::initializer_list<byte>> eojs)
+EL::EL(UDP &udp, std::initializer_list<std::initializer_list<byte>> eojs)
 {
 	int instanceNumber = eojs.size();
 	byte _eojs[instanceNumber][3];
@@ -74,7 +74,7 @@ EL::EL(WiFiUDP &udp, std::initializer_list<std::initializer_list<byte>> eojs)
 /// @param udp WiFiUDP&
 /// @param eojs byte[][3]
 /// @param count int
-void EL::commonConstructor(WiFiUDP &udp, byte eojs[][3], int count)
+void EL::commonConstructor(UDP &udp, byte eojs[][3], int count)
 {
 	_udp = &udp;
 
@@ -477,7 +477,7 @@ void EL::sendMulti(byte sBuffer[], int size)
 	Serial.println("]");
 #endif
 
-	if (_udp->beginMulticastPacket())
+	if (_udp->beginPacket(_multi, EL_PORT))
 	{
 #ifdef __EL_DEBUG__
 		// Serial.println("UDP beginPacket(B) Successful.");
