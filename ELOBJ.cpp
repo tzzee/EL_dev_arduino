@@ -220,7 +220,6 @@ const byte *PDCEDT::setEDT(const byte edt[], int size)
 	m_pdcedt = new byte[length];
 	m_pdcedt[0] = size;
 
-	int i = 1;
 	for (int i = 1; i <= size; i += 1)
 	{
 		m_pdcedt[i] = edt[i - 1];
@@ -477,7 +476,6 @@ const byte *ELOBJ::GetMyPropertyMap(const byte epc) const
 #endif
 	int key = epc - 0x80;
 	byte *pdcedt = m_pdcedt[key];
-	byte pdc = pdcedt[0];
 	byte profNum = pdcedt[1];
 	byte *epcs = &pdcedt[2];
 #ifdef __ELOJB_DEBUG__
@@ -526,7 +524,6 @@ const byte *ELOBJ::GetMyPropertyMap(const byte epc) const
 /// いくつもEPCを検索するなら、GetMyPropertyMapをつかって自分で探すことをお勧めする。
 const bool ELOBJ::hasInfProperty(const byte epc) const
 {
-	int key = epc - 0x80;
 	const byte *setlist = GetMyPropertyMap(0x9d);
 	const byte num = setlist[0];
 	const byte *edtarray = &setlist[1];
@@ -557,7 +554,6 @@ const bool ELOBJ::hasInfProperty(const byte epc) const
 /// No checkでEPCにセットすると、新規作成するのできちんとチェックしてからセットしたい
 const bool ELOBJ::hasSetProperty(const byte epc) const
 {
-	int key = epc - 0x80;
 	const byte *setlist = GetMyPropertyMap(0x9d);
 	const byte num = setlist[0];
 	const byte *edtarray = &setlist[1];

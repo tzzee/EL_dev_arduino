@@ -147,7 +147,6 @@ void EL::commonConstructor(UDP &udp, byte eojs[][3], int count)
 	devObjs[devPosition] = deviceCount;
 	devPosition += 0;
 
-	int classPosition = 0;
 	for (int di = 0; di < deviceCount; di++)
 	{
 		// デバイスのD6登録
@@ -1154,7 +1153,6 @@ void EL::replyInfreqDetail(const IPAddress toip, const byte _seoj[] = nullptr)
 	}
 
 	byte deoj[] = {_rBuffer[EL_SEOJ], _rBuffer[EL_SEOJ + 1], _rBuffer[EL_SEOJ + 2]}; // SEOJがreplyではDEOJになる
-	byte esv = _rBuffer[EL_ESV];
 	byte opc = _rBuffer[EL_OPC];
 
 	// 送信用
@@ -1325,10 +1323,6 @@ void EL::replySetgetDetail(const IPAddress toip, const byte _seoj[] = nullptr)
 	byte detailSize = 0; // data size
 
 	// rBuffer走査用
-	byte *p_rEPC = &_rBuffer[EL_EPC]; // 初期EPCポインタ
-	// この関数を呼ばれるのはINFCの場合であるので、 PDCを見ながらEDT分をスキップしていく
-	byte *p_rPDC = &_rBuffer[EL_EPC + 1]; // 初期PDCポインタ
-
 	opc = 0x00;				   // 返信OPCSet部分
 	detail[detailSize] = 0x00; // 返信OPCGet部分
 	detailSize += 1;
@@ -1484,6 +1478,9 @@ void EL::returner(void)
 	const byte esv = _rBuffer[EL_ESV];
 	const byte epc = _rBuffer[EL_EPC];
 	byte *pdcedt = nullptr;
+	(void)tid;
+	(void)seoj;
+	(void)pdcedt;
 	int devId = 0;
 
 	// 要求されたオブジェクトについて調べる
@@ -1653,7 +1650,6 @@ void EL::recvProcess(void)
 			}
 
 		// OPCで処理
-		boolean success = true;
 			for (int o = 0; o < opc; o += 1)
 			{
 				if (!userfunc(tid, seoj, deoj, esv, opc, epc, pdc, edt)) // 失敗
@@ -1662,7 +1658,6 @@ void EL::recvProcess(void)
 #ifdef __EL_DEBUG__
 				Serial.println("EL::recvProcess() userfunc ret=false (or Node Profile)");
 #endif
-				success = false;
 			}
 
 			// 次のEPC,PDC,EDTへ
