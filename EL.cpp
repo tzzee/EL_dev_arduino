@@ -1650,8 +1650,14 @@ void EL::recvProcess(void)
 			}
 
 		// OPCで処理
+			// EPC,PDC,EDT の並びを順に読み進める(長さは verifyPacket で確かめ済み)。
+			// 以前は epc を進めず、2 つ目から後も 1 つ目の EPC で別の場所のデータを渡していた
+			byte *p_prop = &_rBuffer[EL_EPC];
 			for (int o = 0; o < opc; o += 1)
 			{
+				epc = p_prop[0];
+				pdc = p_prop[1];
+				edt = &p_prop[2];
 				if (!userfunc(tid, seoj, deoj, esv, opc, epc, pdc, edt)) // 失敗
 				{
 				// どこかで失敗したら、失敗を返却
@@ -1661,10 +1667,7 @@ void EL::recvProcess(void)
 			}
 
 			// 次のEPC,PDC,EDTへ
-			// SET, epc,pdc,edt数 進める
-			edt += 2 + edt[0];
-			pdc += 2 + edt[0];
-			edt += 2 + edt[0];
+			p_prop += 2 + pdc;
 		}
 
 		// ESVがSETとかGETとかで動作をかえる
