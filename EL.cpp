@@ -1872,7 +1872,7 @@ bool EL::verifyPacket(const byte buffer[], int packetSize)
 		// OPC
 		while (o < opc)
 		{
-			if (i > packetSize) // サイズ超えた
+			if (i >= packetSize) // PDC が受信の外(i == packetSize も前のパケットの残りを読む)
 			{
 #ifdef __EL_DEBUG__
 				Serial.println("EL::verifyPacket() failed. size over");
@@ -1882,6 +1882,14 @@ bool EL::verifyPacket(const byte buffer[], int packetSize)
 
 			i += 2 + buffer[i]; // 2 byte 固定(EPC,PDC) + edtでindex更新
 			o += 1;
+		}
+		// i は次の PDC の位置なので、最後の EDT の終わりは i - 2。受信の長さを超えていれば捨てる
+		if (i - 1 > packetSize)
+		{
+#ifdef __EL_DEBUG__
+			Serial.println("EL::verifyPacket() failed. last EDT over");
+#endif
+			return false; // 異常パケット
 		}
 		break;
 
